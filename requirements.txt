@@ -1,0 +1,11 @@
+# LectureMind AI — free, offline, no API key required
+flask>=3.0.0
+
+# File extraction
+pymupdf>=1.24.0        # PDF text extraction  (pip name: pymupdf)
+python-docx>=1.1.0     # DOCX text extraction
+
+# NLP / summarisation stack (all free, all local)
+nltk>=3.8.1            # tokenisation, stopwords
+sumy>=0.11.0           # extractive summarisation (LexRank, LSA)
+scikit-learn>=1.4.0    # TF-IDF keyword extraction
