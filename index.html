@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LectureMind AI · Smart Lecture Summarizer</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- App Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+
+  <!-- ░░ NOISE OVERLAY ░░ -->
+  <div class="noise"></div>
+
+  <!-- ░░ BACKGROUND ORBS ░░ -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- ══════════════════════════════════════════
+       NAVBAR
+  ══════════════════════════════════════════ -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <span class="logo-icon"><i class="fa-solid fa-brain"></i></span>
+        <span class="logo-text">LectureMind<em>AI</em></span>
+      </a>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#summarize">Summarize</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+      </ul>
+
+      <div class="nav-right">
+        <span class="status-badge"><i class="fa-solid fa-circle"></i> AI Online</span>
+        <button class="btn-nav-cta" onclick="scrollToUpload()">Try Free</button>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════
+       HERO
+  ══════════════════════════════════════════ -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <i class="fa-solid fa-sparkles"></i>
+        Powered by Claude AI &nbsp;·&nbsp; 100% Free
+      </div>
+
+      <h1 class="hero-title">
+        Turn Lecture Notes<br />
+        into <span class="gradient-text">Pure Knowledge</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Upload PDFs, paste text, or drop your transcripts. Get instant summaries,
+        key&nbsp;concepts, quiz&nbsp;questions, and exam&nbsp;notes — all in seconds.
+      </p>
+
+      <div class="hero-stats">
+        <div class="stat"><strong>10×</strong><span>Faster Review</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><strong>5</strong><span>AI Modes</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><strong>100%</strong><span>Free to Use</span></div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="scrollToUpload()">
+          <i class="fa-solid fa-bolt"></i> Start Summarizing
+        </button>
+        <a href="#how-it-works" class="btn-ghost">
+          <i class="fa-solid fa-play"></i> See How It Works
+        </a>
+      </div>
+
+      <!-- mini flow diagram -->
+      <div class="hero-flow">
+        <div class="flow-node"><i class="fa-regular fa-file-pdf"></i> lecture_notes.pdf</div>
+        <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="flow-node active"><i class="fa-solid fa-brain"></i> AI Processing</div>
+        <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="flow-node"><i class="fa-solid fa-check-circle"></i> Summary Generated</div>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint">
+      <span>Scroll to explore</span>
+      <i class="fa-solid fa-chevron-down bounce"></i>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       UPLOAD / INPUT SECTION
+  ══════════════════════════════════════════ -->
+  <section class="upload-section" id="summarize">
+    <div class="container">
+      <div class="section-label">01 · Input</div>
+      <h2 class="section-title">Upload Your Lecture Content</h2>
+      <p class="section-sub">Supports PDF, DOCX, TXT files or paste directly</p>
+
+      <!-- Tab switcher -->
+      <div class="tab-switcher">
+        <button class="tab active" data-tab="upload" id="tabUpload">
+          <i class="fa-solid fa-upload"></i> File Upload
+        </button>
+        <button class="tab" data-tab="paste" id="tabPaste">
+          <i class="fa-regular fa-clipboard"></i> Paste Text
+        </button>
+      </div>
+
+      <!-- File upload panel -->
+      <div class="panel active" id="panelUpload">
+        <div class="drop-zone" id="dropZone">
+          <div class="drop-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+          <p class="drop-title">Drop your file here</p>
+          <p class="drop-hint">PDF, DOCX, TXT &nbsp;·&nbsp; Max 16 MB</p>
+          <label class="btn-upload" for="fileInput">
+            <i class="fa-solid fa-folder-open"></i> Browse Files
+          </label>
+          <input type="file" id="fileInput" accept=".pdf,.docx,.txt" hidden />
+          <div class="file-preview" id="filePreview"></div>
+        </div>
+      </div>
+
+      <!-- Paste text panel -->
+      <div class="panel" id="panelPaste">
+        <div class="textarea-wrapper">
+          <textarea id="textInput" placeholder="Paste your lecture notes, transcript, or any text here...
+&#10;Example: Today's lecture covered the fundamentals of machine learning including supervised learning algorithms, gradient descent, and the bias-variance tradeoff..."></textarea>
+          <div class="char-count" id="charCount">0 characters</div>
+        </div>
+      </div>
+
+      <!-- Action bar -->
+      <div class="action-bar">
+        <div class="mode-select">
+          <label><i class="fa-solid fa-sliders"></i> Mode</label>
+          <select id="summaryMode">
+            <option value="summary">📄 Full Summary</option>
+            <option value="concepts">💡 Key Concepts</option>
+            <option value="quiz">❓ Quiz Questions</option>
+            <option value="exam">📝 Exam Notes</option>
+            <option value="all">✨ Everything</option>
+          </select>
+        </div>
+        <button class="btn-primary btn-summarize" id="summarizeBtn" onclick="handleSummarize()">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Generate Summary</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       OUTPUT SECTION
+  ══════════════════════════════════════════ -->
+  <section class="output-section" id="output" style="display:none;">
+    <div class="container">
+      <div class="section-label">02 · Results</div>
+      <h2 class="section-title">Your AI Summary</h2>
+
+      <div class="output-meta" id="outputMeta"></div>
+
+      <div class="output-grid" id="outputGrid">
+        <!-- Cards injected by JS -->
+      </div>
+
+      <div class="output-actions">
+        <button class="btn-ghost" onclick="copyAll()">
+          <i class="fa-regular fa-copy"></i> Copy All
+        </button>
+        <button class="btn-ghost" onclick="downloadSummary()">
+          <i class="fa-solid fa-download"></i> Download .txt
+        </button>
+        <button class="btn-primary" onclick="scrollToUpload()">
+          <i class="fa-solid fa-plus"></i> New Summary
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo output (pre-filled showcase) -->
+  <section class="demo-section" id="demoSection">
+    <div class="container">
+      <div class="section-label">✦ Preview</div>
+      <h2 class="section-title">Sample Output</h2>
+      <p class="section-sub">Here's what LectureMind AI generates from a machine learning lecture</p>
+
+      <div class="demo-grid">
+        <div class="demo-card glass">
+          <div class="card-header">
+            <span class="card-icon"><i class="fa-solid fa-align-left"></i></span>
+            <span class="card-title">Summary</span>
+          </div>
+          <p>This lecture covers foundational principles of machine learning, focusing on supervised learning. Key ideas include the bias-variance tradeoff, gradient descent, and regularization techniques. Neural networks are introduced as universal function approximators, with backpropagation enabling efficient training.</p>
+        </div>
+
+        <div class="demo-card glass">
+          <div class="card-header">
+            <span class="card-icon"><i class="fa-solid fa-lightbulb"></i></span>
+            <span class="card-title">Key Concepts</span>
+          </div>
+          <ul class="concept-list">
+            <li><i class="fa-solid fa-circle-dot"></i> Supervised vs. Unsupervised Learning</li>
+            <li><i class="fa-solid fa-circle-dot"></i> Gradient Descent & Learning Rate</li>
+            <li><i class="fa-solid fa-circle-dot"></i> Bias-Variance Tradeoff</li>
+            <li><i class="fa-solid fa-circle-dot"></i> L1 / L2 Regularization</li>
+            <li><i class="fa-solid fa-circle-dot"></i> Neural Network Architecture</li>
+            <li><i class="fa-solid fa-circle-dot"></i> Backpropagation Algorithm</li>
+          </ul>
+        </div>
+
+        <div class="demo-card glass">
+          <div class="card-header">
+            <span class="card-icon"><i class="fa-solid fa-circle-question"></i></span>
+            <span class="card-title">Quiz Question</span>
+          </div>
+          <div class="quiz-item">
+            <p class="quiz-q"><strong>Q:</strong> What is the purpose of regularization?</p>
+            <p class="quiz-a"><strong>A:</strong> To reduce overfitting by penalizing large weights, improving generalization to unseen data.</p>
+          </div>
+        </div>
+
+        <div class="demo-card glass">
+          <div class="card-header">
+            <span class="card-icon"><i class="fa-solid fa-pen-to-square"></i></span>
+            <span class="card-title">Exam Notes</span>
+          </div>
+          <pre class="exam-notes">• Know the math: w := w − α·∇L(w)
+• L1 = Lasso, L2 = Ridge regularization
+• ReLU solves vanishing gradient problem
+• Review cross-entropy loss formula</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       FEATURES
+  ══════════════════════════════════════════ -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="section-label">03 · Features</div>
+      <h2 class="section-title">Everything You Need to Ace Your Exams</h2>
+      <p class="section-sub">Five powerful AI modes designed for students</p>
+
+      <div class="features-grid">
+        <div class="feature-card glass">
+          <div class="feat-icon"><i class="fa-solid fa-file-lines"></i></div>
+          <h3>Smart Summaries</h3>
+          <p>Get concise, structured summaries that preserve the key ideas and remove the noise.</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feat-icon"><i class="fa-solid fa-lightbulb"></i></div>
+          <h3>Key Concept Extraction</h3>
+          <p>Automatically identifies and lists the most important terms and concepts.</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feat-icon"><i class="fa-solid fa-circle-question"></i></div>
+          <h3>Quiz Generation</h3>
+          <p>Creates practice questions with answers to help you test your understanding.</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feat-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+          <h3>Exam Notes</h3>
+          <p>Generates bullet-point exam cheat sheets perfect for last-minute revision.</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feat-icon"><i class="fa-solid fa-upload"></i></div>
+          <h3>Multi-Format Upload</h3>
+          <p>Supports PDF, DOCX, TXT files plus direct text paste — no conversion needed.</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feat-icon"><i class="fa-solid fa-bolt"></i></div>
+          <h3>Instant Results</h3>
+          <p>Powered by Claude AI for lightning-fast, accurate, and context-aware output.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       HOW IT WORKS
+  ══════════════════════════════════════════ -->
+  <section class="how-section" id="how-it-works">
+    <div class="container">
+      <div class="section-label">04 · Process</div>
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-sub">Three steps from notes to knowledge</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-icon"><i class="fa-solid fa-upload"></i></div>
+          <h3>Upload or Paste</h3>
+          <p>Drop your PDF, DOCX, or TXT lecture file — or paste raw text directly into the editor.</p>
+        </div>
+        <div class="step-connector"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-icon"><i class="fa-solid fa-brain"></i></div>
+          <h3>AI Processes</h3>
+          <p>Claude AI reads, understands, and restructures your content in seconds.</p>
+        </div>
+        <div class="step-connector"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+          <h3>Get Your Output</h3>
+          <p>Download summaries, quiz questions, key concepts, and exam notes instantly.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="logo-icon"><i class="fa-solid fa-brain"></i></span>
+        <span class="logo-text">LectureMind<em>AI</em></span>
+        <p>Built for students, by students. Open source & free forever.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#summarize">Summarize</a>
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="https://github.com/" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 LectureMind AI · Built with <i class="fa-solid fa-heart" style="color:#f06;"></i> using Flask & Claude AI</p>
+    </div>
+  </footer>
+
+  <!-- ░░ LOADING OVERLAY ░░ -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-box">
+      <div class="spinner"></div>
+      <p class="loading-text" id="loadingText">Analyzing your notes...</p>
+      <div class="loading-bar"><div class="loading-fill" id="loadingFill"></div></div>
+    </div>
+  </div>
+
+  <!-- ░░ TOAST ░░ -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- App Script -->
+  <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>
